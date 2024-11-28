@@ -1,44 +1,49 @@
 import SwiftUI
 
 struct TelaAdicionarTransacao: View {
-    @Environment(\.presentationMode) var modoDeApresentacao
     @Binding var transacoes: [Transacao]
+    @Environment(\.presentationMode) var modoDeApresentacao
 
     @State private var nome: String = ""
     @State private var valor: String = ""
-    @State private var data = Date()
-    @State private var tipo: TipoTransacao = .saida
+    @State private var data: Date = Date()
+    @State private var tipo: TipoTransacao = .entrada
 
     var body: some View {
         NavigationView {
             Form {
                 Section(header: Text("Detalhes da Transação")) {
-                    TextField("Nome da Transação", text: $nome)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                    TextField("Nome", text: $nome)
+                        .autocapitalization(.words)
 
-                    TextField("Valor", text: $valor)
+                    TextField("Valor (R$)", text: $valor)
                         .keyboardType(.decimalPad)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
 
                     DatePicker("Data", selection: $data, displayedComponents: .date)
 
                     Picker("Tipo", selection: $tipo) {
-                        ForEach(TipoTransacao.allCases, id: \.self) { tipo in
-                            Text(tipo.rawValue)
-                        }
+                        Text("Entrada").tag(TipoTransacao.entrada)
+                        Text("Saída").tag(TipoTransacao.saida)
                     }
                     .pickerStyle(SegmentedPickerStyle())
                 }
 
-                Section {
-                    Button(action: salvarTransacao) {
-                        Text("Salvar")
-                            .frame(maxWidth: .infinity, alignment: .center)
-                    }
-                    .disabled(nome.isEmpty || Double(valor) == nil)
+                              Button(action: salvarTransacao) {
+                    Text("Salvar")
+                        .fontWeight(.bold)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(nome.isEmpty || Double(valor) == nil ? Color.gray : Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                        .shadow(color: Color.black.opacity(0.2), radius: 5, x: 0, y: 3)
                 }
+                .disabled(nome.isEmpty || Double(valor) == nil)
             }
             .navigationTitle("Nova Transação")
+            .navigationBarItems(leading: Button("Cancelar") {
+                modoDeApresentacao.wrappedValue.dismiss()
+            })
         }
     }
 
@@ -48,11 +53,5 @@ struct TelaAdicionarTransacao: View {
             transacoes.append(novaTransacao)
             modoDeApresentacao.wrappedValue.dismiss()
         }
-    }
-}
-
-struct TelaAdicionarTransacao_Previews: PreviewProvider {
-    static var previews: some View {
-        TelaAdicionarTransacao(transacoes: .constant([]))
     }
 }

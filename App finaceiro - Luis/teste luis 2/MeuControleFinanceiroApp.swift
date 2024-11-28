@@ -1,10 +1,3 @@
-//
-//  MeuControleFinanceiroApp.swift
-//  teste luis 2
-//
-//  Created by user on 28/11/24.
-//
-
 import SwiftUI
 
 @main
